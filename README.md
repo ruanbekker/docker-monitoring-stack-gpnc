@@ -34,7 +34,7 @@ Access grafana on [Grafana Home](http://localhost:3000/?orgId=1) and you should 
 
 Once you select the dashboard, it should look something like this:
 
-![](./assets/grafana-dasboard.png)
+![](./assets/grafana-dashboard.png)
 
 When you select ["Alerting" and "Alert rules"](http://localhost:3000/alerting/list) you will find the recording and alerting rules:
 
