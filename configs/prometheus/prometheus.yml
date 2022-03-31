@@ -5,6 +5,7 @@ global:
 
 rule_files:
   - /etc/prometheus/recording-rules.yml
+  - /etc/prometheus/alerting-rules.yml
 
 scrape_configs:
   - job_name: prometheus
