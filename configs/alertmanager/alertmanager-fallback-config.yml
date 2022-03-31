@@ -1,0 +1,7 @@
+route:
+  group_wait: 0s
+  receiver: empty-receiver
+
+receivers:
+  # no notifications will be sent to alertmanager
+  - name: 'empty-receiver'
