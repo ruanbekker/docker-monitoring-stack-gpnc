@@ -48,6 +48,10 @@ And then we can view more detail on a alert rule:
 
 ![](./assets/grafana-alerting-detail.png)
 
+And for our container metrics we can access the **Container Metrics** dashboard:
+
+![](./assets/grafana-container-metrics.png)
+
 ## Endpoints
 
 The following endpoints are available:

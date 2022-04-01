@@ -23,6 +23,7 @@ services:
       - ./configs/grafana/provisioning/dashboards.yml:/etc/grafana/provisioning/dashboards/provisioning-dashboards.yaml:ro
       - ./configs/grafana/provisioning/datasources.yml:/etc/grafana/provisioning/datasources/provisioning-datasources.yaml:ro
       - ./dashboards/node-metrics.json:/var/lib/grafana/dashboards/node-metrics.json:ro
+      - ./dashboards/container-metrics.json:/var/lib/grafana/dashboards/container-metrics.json:ro
       - grafana-data:/var/lib/grafana
     depends_on:
       - prometheus
@@ -33,7 +34,7 @@ services:
     logging: *default-logging
 
   prometheus:
-    image: prom/prometheus:v2.34.0
+    image: prom/prometheus:latest
     container_name: prometheus
     restart: unless-stopped
     command:
@@ -54,7 +55,7 @@ services:
     logging: *default-logging
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.39.3
+    image: gcr.io/cadvisor/cadvisor:latest
     container_name: cadvisor
     restart: unless-stopped
     privileged: true
@@ -63,6 +64,8 @@ services:
       - /var/run:/var/run:rw
       - /sys:/sys:ro
       - /var/lib/docker:/var/lib/docker:ro
+        # https://github.com/google/cadvisor/issues/1565#issuecomment-718812180
+      - /var/run/docker.sock:/var/run/docker.sock
       #- /dev/disk:/dev/disk:ro
     networks:
       - monitoring
@@ -83,6 +86,13 @@ services:
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
     networks:
       - monitoring
+    logging: *default-logging
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - 6379:6379
     logging: *default-logging
 
 volumes:
