@@ -9,3 +9,12 @@ datasources:
     version: 1
     editable: true
     isDefault: false
+  - name: Alertmanager
+    type: alertmanager
+    url: http://alertmanager:9093
+    access: proxy
+    jsonData:
+      implementation: 'prometheus' 
+    basicAuth: false
+    #basicAuthUser: my_user
+    #basicAuthPassword: test_password
