@@ -65,7 +65,7 @@ The following endpoints are available:
 
 ## Cleanup
 
-To remove the containers:
+To remove the containers using docker compose (or `make clean`):
 
 ```bash
 docker-compose down
