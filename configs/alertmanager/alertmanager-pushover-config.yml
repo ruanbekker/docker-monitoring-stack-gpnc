@@ -1,0 +1,71 @@
+# https://prometheus.io/docs/alerting/latest/notification_examples/
+# https://rtfm.co.ua/en/prometheus-alertmanagers-alerts-receivers-and-routing-based-on-severity-level-and-tags/
+global:
+  resolve_timeout: 5m
+
+route:
+  # https://www.robustperception.io/whats-the-difference-between-group_interval-group_wait-and-repeat_interval
+  group_by: ['alertname', 'cluster', 'job', 'environment', 'severity']
+  repeat_interval: 24h
+  group_interval: 5m
+  # capture All Dev + All INFO
+  receiver: 'warning-pushover'
+  routes:
+    # capture All WARN to the 'warning' with P3
+    - match:
+        alertname: debug_instance_hard_disk_low
+      receiver: critical-pushover
+    - match:
+        severity: warning
+      receiver: warning-pushover
+      routes:
+      # forward Dev WARN to the 'default'
+      - match_re:
+          environment: .*(-dev).*
+        receiver: default-pushover
+      - match_re:
+          alertname: .*(hard_disk).*
+        receiver: critical-pushover
+
+    # capture All CRIT to the 'critical-pushover'
+    - match:
+        severity: critical
+      receiver: critical-pushover
+      routes:
+      # forward Stage CRIT to the 'warning-pushover'
+      - match_re:
+          environment: .*(-stage).*
+        receiver: warning-pushover
+      # forward Dev CRIT to the 'default-pushover'
+      - match_re:
+          environment: .*(-dev).*
+        receiver: default-pushover
+
+receivers:
+  - name: 'default-pushover'
+    pushover_configs:
+      - token: xxxxxxxxxxxxxxxxxxxxxxxxx
+        user_key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        title: '{{ template "pushover.default.title" . }}'
+        message: '{{ template "pushover.default.message" . }}'
+        url: '{{ template "pushover.default.url" . }}'
+        priority: '{{ if eq .Status "firing" }}2{{ else }}0{{ end }}'
+
+  - name: 'warning-pushover'
+    pushover_configs:
+      - token: xxxxxxxxxxxxxxxxxxxxxxxxx
+        user_key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        title: '[{{ .Status | toUpper }}] {{ .CommonAnnotations.title }}'
+        message: '{{ .CommonAnnotations.description }}'
+        url: '{{ template "pushover.default.url" . }}'
+        priority: '{{ if eq .Status "firing" }}2{{ else }}0{{ end }}'
+
+  - name: 'critical-pushover'
+    pushover_configs:
+      - token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        user_key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        title: '{{ if eq .Status "firing" }}ALARM{{ else }}OK{{ end }} [{{ .Status | toUpper }}] {{ .CommonAnnotations.summary }}'
+        message: '{{ template "pushover.default.message" . }}'
+        url: '{{ template "pushover.default.url" . }}'
+        priority: '{{ if eq .Status "firing" }}2{{ else }}0{{ end }}'
+
