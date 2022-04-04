@@ -3,7 +3,7 @@ Grafana Prometheus Node-Exporter cAdvisor - Docker Monitoring Stack
 
 ## Boot
 
-Boot the stack:
+Boot the stack with docker compose (or `make up`):
 
 ```bash
 docker-compose up -d
@@ -28,7 +28,7 @@ prometheus      /bin/prometheus --config.f ...   Up             0.0.0.0:9090->90
 
 ## Access Grafana
 
-Access grafana on [Grafana Home](http://localhost:3000/?orgId=1) and you should see the dashboard that was provisioned:
+Access grafana on [Grafana Home](http://localhost:3000/?orgId=1) (or `make open`) and you should see the dashboard that was provisioned:
 
 ![](./assets/grafana-home.png)
 
