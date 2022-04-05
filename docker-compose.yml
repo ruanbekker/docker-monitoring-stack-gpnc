@@ -114,6 +114,8 @@ services:
     container_name: redis
     ports:
       - 6379:6379
+    cpus: 0.5
+    mem_limit: 512m
     logging: *default-logging
 
 volumes:
