@@ -24,6 +24,7 @@ cadvisor        /usr/bin/cadvisor -logtostderr   Up (healthy)   8080/tcp
 grafana         /run.sh                          Up             0.0.0.0:3000->3000/tcp
 node-exporter   /bin/node_exporter --path. ...   Up             9100/tcp              
 prometheus      /bin/prometheus --config.f ...   Up             0.0.0.0:9090->9090/tcp
+alertmanager    /bin/alertmanager --config ...   Up             0.0.0.0:9093->9093/tcp
 ```
 
 ## Access Grafana
@@ -61,7 +62,8 @@ The following endpoints are available:
 | Grafana        | http://grafana:3000       | http://localhost:3000 |
 | Prometheus     | http://prometheus:9090    | http://localhost:9090 |
 | Node-Exporter  | http://node-exporter:9100 | http://localhost:9100 |
-| cAdvisor       | http://cadvisor:8080      | N/A |
+| cAdvisor       | http://cadvisor:8080      | N/A                   |
+| Alertmanager   | http://alertmanager:9093  | http://localhost:9093 |
 
 ## Cleanup
 

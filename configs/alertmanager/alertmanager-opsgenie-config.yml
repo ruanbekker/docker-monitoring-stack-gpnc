@@ -1,0 +1,61 @@
+# https://prometheus.io/docs/alerting/latest/notification_examples/
+# https://rtfm.co.ua/en/prometheus-alertmanagers-alerts-receivers-and-routing-based-on-severity-level-and-tags/
+global:
+  resolve_timeout: 5m
+
+route:
+  # https://www.robustperception.io/whats-the-difference-between-group_interval-group_wait-and-repeat_interval
+  group_by: ['alertname', 'cluster', 'job', 'environment', 'severity']
+  repeat_interval: 24h
+  group_interval: 5m
+  # capture All Dev + All INFO
+  receiver: 'empty-receiver'
+  routes:
+    # capture All WARN to the 'warning' with P3
+    - match:
+        alertname: debug_instance_hard_disk_low
+      receiver: empty-receiver
+    - match:
+        severity: warning
+      receiver: empty-receiver
+      routes:
+      # forward Dev WARN to the 'default'
+      - match_re:
+          environment: .*(-dev).*
+        receiver: empty-receiver
+      - match_re:
+          alertname: .*(hard_disk).*
+        receiver: critical
+
+    # capture All CRIT to the 'critical' with P1
+    - match:
+        severity: critical
+      receiver: critical
+      routes:
+      # forward Stage CRIT to the 'empty-receiver'
+      - match_re:
+          environment: .*(-stage).*
+        receiver: empty-receiver
+      # forward Dev CRIT to the 'empty-receiver'
+      - match_re:
+          environment: .*(-dev).*
+        receiver: empty-receiver
+
+receivers:
+  - name: 'empty-receiver'
+
+  - name: 'critical'
+    opsgenie_configs:
+      - send_resolved: true
+        http_config: {}
+        api_key: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        api_url: https://api.eu.opsgenie.com/
+        message: '[{{ .Status | toUpper }}] {{ .CommonAnnotations.summary }}'
+        description: "{{ .CommonAnnotations.description }}\nMore Info:\n- Impact: {{ .CommonAnnotations.impact }}\n- Action: {{ .CommonAnnotations.action }}\n- Dashboard: {{ .CommonAnnotations.dashboard }}\n- Runbook: {{ .CommonAnnotations.runbook }}"
+        source: '{{ template "opsgenie.default.source" . }}'
+        responders:
+        - name: DevOps
+          type: team
+        priority: '{{ if .CommonAnnotations.priority }}{{ .CommonAnnotations.priority }}{{ else }}P3{{ end }}'
+        tags: 'monitoring, exporters, prometheus'
+        note: 'test-note'
