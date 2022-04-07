@@ -28,11 +28,11 @@ prometheus      /bin/prometheus --config.f ...   Up             0.0.0.0:9090->90
 
 ## Access Grafana
 
-Access grafana on [Grafana Home](http://localhost:3000/?orgId=1) (or `make open`) and you should see the dashboard that was provisioned:
+Access grafana on [Grafana Home](http://localhost:3000/?orgId=1) (or `make open`) and you should see the two dashboards that was provisioned:
 
 ![](./assets/grafana-home.png)
 
-Once you select the dashboard, it should look something like this:
+Once you select the nodes dashboard, it should look something like this:
 
 ![](./assets/grafana-dashboard.png)
 
