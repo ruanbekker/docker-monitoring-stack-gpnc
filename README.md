@@ -73,6 +73,10 @@ To remove the containers using docker compose (or `make clean`):
 docker-compose down
 ```
 
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/ruanbekker/docker-monitoring-stack-gpnc.svg)](https://starchart.cc/ruanbekker/docker-monitoring-stack-gpnc)
+
 ## Resources
 
 Heavily inspired from [this exporter guide](https://grafana.com/oss/prometheus/exporters/node-exporter/)
