@@ -10,7 +10,7 @@ x-logging:
 
 services:
   grafana:
-    image: grafana/grafana:${GRAFANA_VERSION:-9.0.2}
+    image: grafana/grafana:${GRAFANA_VERSION:-9.1.1}
     container_name: grafana
     restart: unless-stopped
     environment:
@@ -35,7 +35,7 @@ services:
     logging: *default-logging
 
   prometheus:
-    image: prom/prometheus:${PROMETHEUS_VERSION:-latest}
+    image: prom/prometheus:${PROMETHEUS_VERSION:-v2.38.0}
     container_name: prometheus
     restart: unless-stopped
     command:
@@ -60,7 +60,7 @@ services:
     logging: *default-logging
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:${CADVISOR_VERSION:-latest}
+    image: gcr.io/cadvisor/cadvisor:${CADVISOR_VERSION:-v0.45.0}
     container_name: cadvisor
     restart: unless-stopped
     privileged: true
@@ -94,7 +94,7 @@ services:
     logging: *default-logging
 
   alertmanager:
-    image: prom/alertmanager:${ALERTMANAGER_VERSION:-latest}
+    image: prom/alertmanager:${ALERTMANAGER_VERSION:-v0.24.0}
     container_name: alertmanager
     command:
       - '--config.file=/etc/alertmanager/config.yml'
