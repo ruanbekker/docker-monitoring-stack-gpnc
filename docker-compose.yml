@@ -10,7 +10,7 @@ x-logging:
 
 services:
   grafana:
-    image: grafana/grafana:${GRAFANA_VERSION:-9.1.5}
+    image: grafana/grafana:${GRAFANA_VERSION:-9.2.5}
     container_name: grafana
     restart: unless-stopped
     environment:
@@ -35,7 +35,7 @@ services:
     logging: *default-logging
 
   prometheus:
-    image: prom/prometheus:${PROMETHEUS_VERSION:-v2.38.0}
+    image: prom/prometheus:${PROMETHEUS_VERSION:-v2.40.2}
     container_name: prometheus
     restart: unless-stopped
     command:
@@ -60,7 +60,7 @@ services:
     logging: *default-logging
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:${CADVISOR_VERSION:-v0.45.0}
+    image: gcr.io/cadvisor/cadvisor:${CADVISOR_VERSION:-v0.46.0}
     container_name: cadvisor
     restart: unless-stopped
     privileged: true
@@ -77,7 +77,7 @@ services:
     logging: *default-logging
 
   node-exporter:
-    image: prom/node-exporter:${NODE_EXPORTER_VERSION:-v1.3.1}
+    image: prom/node-exporter:${NODE_EXPORTER_VERSION:-v1.4.0}
     container_name: node-exporter
     restart: unless-stopped
     volumes:
