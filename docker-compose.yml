@@ -10,7 +10,7 @@ x-logging:
 
 services:
   grafana:
-    image: grafana/grafana:${GRAFANA_VERSION:-9.4.3}
+    image: grafana/grafana:${GRAFANA_VERSION:-9.5.2}
     container_name: grafana
     restart: unless-stopped
     environment:
@@ -20,6 +20,7 @@ services:
       - GF_LOG_MODE=console
       - GF_LOG_LEVEL=critical
       - GF_PANELS_ENABLE_ALPHA=true
+      - GF_INSTALL_PLUGINS=grafana-polystat-panel
     volumes:
       - ./configs/grafana/provisioning/dashboards.yml:/etc/grafana/provisioning/dashboards/provisioning-dashboards.yaml:ro
       - ./configs/grafana/provisioning/datasources.yml:/etc/grafana/provisioning/datasources/provisioning-datasources.yaml:ro
