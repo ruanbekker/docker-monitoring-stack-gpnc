@@ -55,6 +55,10 @@ And for our container metrics we can access the **Container Metrics** dashboard:
 
 ![](./assets/grafana-container-metrics.png)
 
+And we can also view our **Container Logs** in the explore section:
+
+![](./assets/grafana-loki.png)
+
 ## Endpoints
 
 The following endpoints are available:
