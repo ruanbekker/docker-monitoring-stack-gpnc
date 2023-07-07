@@ -94,6 +94,29 @@ services:
       - monitoring
     logging: *default-logging
 
+  loki:
+    image: grafana/loki:${LOKI_VERSION:-2.7.4}
+    ports:
+      - 3100:3100
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - monitoring
+    logging: *default-logging
+
+  promtail:
+    image:  grafana/promtail:${PROMTAIL_VERSION:-2.7.4}
+    container_name: promtail
+    volumes:
+      - ./configs/promtail/promtail.yaml:/etc/promtail/docker-config.yaml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/promtail/docker-config.yaml
+    depends_on:
+      - loki
+    networks:
+      - monitoring
+    logging: *default-logging
+
   alertmanager:
     image: prom/alertmanager:${ALERTMANAGER_VERSION:-v0.25.0}
     container_name: alertmanager
@@ -117,6 +140,9 @@ services:
       - 6379:6379
     cpus: 0.5
     mem_limit: 512m
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
     logging: *default-logging
 
 volumes:
