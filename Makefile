@@ -6,15 +6,24 @@ help: ## This help.
 
 .DEFAULT_GOAL := help
 
+# Determine whether to use "docker-compose" or "docker compose"
+DOCKER_COMPOSE := $(shell which docker-compose 2>/dev/null)
+ifeq ($(DOCKER_COMPOSE),)
+	DOCKER_COMPOSE := $(shell which docker 2>/dev/null)
+	DOCKER_COMPOSE_CMD := compose
+else
+	DOCKER_COMPOSE_CMD := up -d --build
+endif
+
 # DOCKER TASKS
 up: ## Runs the containers in detached mode
-	docker-compose up -d --build
+	$(DOCKER_COMPOSE) $(DOCKER_COMPOSE_CMD)
 
 clean: ## Stops and removes all containers
-	docker-compose down
+	$(DOCKER_COMPOSE) down
 
 logs: ## View the logs from the containers
-	docker-compose logs -f
+	$(DOCKER_COMPOSE) logs -f
 
 open: ## Opens tabs in container
 	open http://localhost:3000/
