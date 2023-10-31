@@ -9,6 +9,8 @@ groups:
     record: instance:node_load1_per_cpu:ratio
   - expr: 1 - (node_memory_MemAvailable_bytes{job="node-exporter"} / node_memory_MemTotal_bytes{job="node-exporter"})
     record: instance:node_memory_utilisation:ratio
+  - expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100)
+    record: instance:node_memory_utilisation:percentage
   - expr: rate(node_vmstat_pgmajfault{job="node-exporter"}[1m])
     record: instance:node_vmstat_pgmajfault:rate1m
   - expr: rate(node_disk_io_time_seconds_total{job="node-exporter", device!=""}[1m])
