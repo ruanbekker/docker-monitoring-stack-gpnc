@@ -1,6 +1,12 @@
 # docker-monitoring-stack-gpnc
 Grafana Prometheus Node-Exporter cAdvisor - Docker Monitoring Stack
 
+## Makefile
+
+[Note](https://docs.docker.com/compose/install/linux/): Due to `docker-compose` and the `compose` plugin, you might have one of the two installed. I have a `Makefile` that will detect which on you have installed.
+
+You can list the targets using `make`.
+
 ## Boot
 
 Boot the stack with docker compose (or `make up`):
