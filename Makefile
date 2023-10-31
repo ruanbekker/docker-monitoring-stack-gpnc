@@ -10,20 +10,20 @@ help: ## This help.
 DOCKER_COMPOSE := $(shell which docker-compose 2>/dev/null)
 ifeq ($(DOCKER_COMPOSE),)
 	DOCKER_COMPOSE := $(shell which docker 2>/dev/null)
-	DOCKER_COMPOSE_CMD := compose
+	PREFIX := compose
 else
-	DOCKER_COMPOSE_CMD := up -d --build
+	PREFIX :=
 endif
 
 # DOCKER TASKS
 up: ## Runs the containers in detached mode
-	$(DOCKER_COMPOSE) $(DOCKER_COMPOSE_CMD)
+	$(DOCKER_COMPOSE) $(PREFIX) up -d --build
 
 clean: ## Stops and removes all containers
-	$(DOCKER_COMPOSE) down
+	$(DOCKER_COMPOSE) $(PREFIX) down
 
 logs: ## View the logs from the containers
-	$(DOCKER_COMPOSE) logs -f
+	$(DOCKER_COMPOSE) $(PREFIX) logs -f
 
 open: ## Opens tabs in container
 	open http://localhost:3000/
