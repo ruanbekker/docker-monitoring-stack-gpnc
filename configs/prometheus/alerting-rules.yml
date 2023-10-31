@@ -1,6 +1,24 @@
 groups:
 - name: node-exporter
   rules:
+  - alert: NodeOutOfMemory
+    annotations:
+      summary: Node out of memory (instance {{ $labels.instance }})
+      description: "Node memory is filling up (< 10% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+    labels:
+      severity: warning
+    expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10) * on(instance) group_left (nodename) node_uname_info{nodename=~".+"}
+    for: 2m
+
+  - alert: NodeMemoryUnderMemoryPressure
+    annotations:
+      summary: Node memory under memory pressure (instance {{ $labels.instance }})
+      description: "The node is under heavy memory pressure. High rate of major page faults\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+    labels:
+      severity: warning
+    expr: (rate(node_vmstat_pgmajfault[1m]) > 1000) * on(instance) group_left (nodename) node_uname_info{nodename=~".+"}
+    for: 2m
+
   - alert: NodeFilesystemSpaceFillingUp
     annotations:
       description: "Filesystem on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf \"%.2f\" $value }}% available space left and is filling up."
