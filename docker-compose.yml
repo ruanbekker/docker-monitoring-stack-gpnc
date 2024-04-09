@@ -10,7 +10,7 @@ x-logging:
 
 services:
   grafana:
-    image: grafana/grafana:${GRAFANA_VERSION:-10.4.1}
+    image: grafana/grafana:${GRAFANA_VERSION:-11.0.0-preview}
     container_name: grafana
     restart: unless-stopped
     environment:
