@@ -13,6 +13,8 @@ services:
     image: grafana/grafana:${GRAFANA_VERSION:-11.0.0-preview}
     container_name: grafana
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
@@ -20,7 +22,7 @@ services:
       - GF_LOG_MODE=console
       - GF_LOG_LEVEL=critical
       - GF_PANELS_ENABLE_ALPHA=true
-      - GF_INSTALL_PLUGINS=grafana-polystat-panel
+      - GF_INSTALL_PLUGINS=${GRAFANA_PLUGINS_LIST}
     volumes:
       - ./configs/grafana/provisioning/dashboards.yml:/etc/grafana/provisioning/dashboards/provisioning-dashboards.yaml:ro
       - ./configs/grafana/provisioning/datasources.yml:/etc/grafana/provisioning/datasources/provisioning-datasources.yaml:ro
@@ -29,6 +31,7 @@ services:
       - grafana-data:/var/lib/grafana
     depends_on:
       - prometheus
+      - loki
     ports:
       - 3000:3000
     networks:
@@ -56,6 +59,36 @@ services:
       - alertmanager
     ports:
       - 9090:9090
+    networks:
+      - monitoring
+    logging: *default-logging
+
+  loki:
+    image: grafana/loki:main-e9b6ce9
+    container_name: loki
+    restart: on-failure
+    command: -config.file=/etc/loki/local-config.yaml --pattern-ingester.enabled=true
+    environment:
+      - LOG_CLUSTER_DEPTH=8
+      - LOG_SIM_TH=0.3
+    ports:
+      - '3100:3100'
+    volumes:
+      - ./configs/loki/loki-config.yaml:/etc/loki/local-config.yaml
+    depends_on:
+      - alertmanager
+    networks:
+      - monitoring
+    logging: *default-logging
+
+  log-generator:
+    image: log-generator # svennergr/fake-logs-generator:main-c8d21cc
+    container_name: log-generator
+    build:
+      context: ./includes/log-generator
+    command: -url http://loki:3100/loki/api/v1/push
+    depends_on:
+      - loki
     networks:
       - monitoring
     logging: *default-logging

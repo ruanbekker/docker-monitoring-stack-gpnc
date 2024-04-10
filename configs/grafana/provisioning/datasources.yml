@@ -18,3 +18,11 @@ datasources:
     basicAuth: false
     #basicAuthUser: my_user
     #basicAuthPassword: test_password
+  - name: gdev-testdata
+    isDefault: false
+    type: testdata
+  - name: gdev-loki
+    type: loki
+    uid: gdev-loki
+    access: proxy
+    url: http://loki:3100
