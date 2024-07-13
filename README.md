@@ -1,5 +1,9 @@
 # docker-monitoring-stack-gpnc
-Grafana Prometheus Node-Exporter cAdvisor - Docker Monitoring Stack
+Grafana Prometheus Node-Exporter cAdvisor Loki - Docker Monitoring Stack
+
+## About
+
+Get your monitoring stack up and running with one command using a Docker Compose stack featuring Grafana, Prometheus, Node-Exporter, cAdvisor, Alertmanager, and Loki.
 
 ## Makefile
 
@@ -31,15 +35,17 @@ grafana         /run.sh                          Up             0.0.0.0:3000->30
 node-exporter   /bin/node_exporter --path. ...   Up             9100/tcp              
 prometheus      /bin/prometheus --config.f ...   Up             0.0.0.0:9090->9090/tcp
 alertmanager    /bin/alertmanager --config ...   Up             0.0.0.0:9093->9093/tcp
+loki            /usr/bin/loki -conf ...          Up             0.0.0.0:3100->3100/tcp
+promtail        /usr/bin/promtail ...            Up
 ```
 
 ## Access Grafana
 
-Access grafana on [Grafana Home](http://localhost:3000/?orgId=1) (or `make open`) and you should see the two dashboards that was provisioned:
+Access grafana on [Grafana Home](http://localhost:3000/?orgId=1) (or `make open`) and you should see the three dashboards that was provisioned:
 
 ![](./assets/grafana-home.png)
 
-Once you select the nodes dashboard, it should look something like this:
+Once you select the **Node Metrics** dashboard, it should look something like this:
 
 ![](./assets/grafana-dashboard.png)
 
@@ -59,6 +65,18 @@ And for our container metrics we can access the **Container Metrics** dashboard:
 
 ![](./assets/grafana-container-metrics.png)
 
+Then for our last dashboard, the **Container Log Search**, by default the metric panel will be collapsed, but to expand it for visibility it will look like this:
+
+![](./assets/grafana-logs-search-dashboard.png)
+
+And we can also view our **Container Logs** in the explore section:
+
+![](./assets/grafana-logs-view.png)
+
+For discovering the **Logs** we can navigate to the Explore / Logs view:
+
+![](./assets/grafana-explore-logs.png)
+
 ## Endpoints
 
 The following endpoints are available:
@@ -70,6 +88,7 @@ The following endpoints are available:
 | Node-Exporter  | http://node-exporter:9100 | http://localhost:9100 |
 | cAdvisor       | http://cadvisor:8080      | N/A                   |
 | Alertmanager   | http://alertmanager:9093  | http://localhost:9093 |
+| Loki           | http://loki:3100          | http://localhost:3100 |
 
 ## Cleanup
 

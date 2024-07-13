@@ -1,0 +1,11 @@
+groups:
+    - name: log-rules
+      rules:
+        - alert: HighLogErrorRate
+          expr: rate({service_name="loki"} | logfmt | level="error"[1m]) > 1
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            description: 'High error rate detected in logs for job {{ $labels.job }}. Instance: {{ $labels.instance }}.'
+            summary: High error rate detected in logs

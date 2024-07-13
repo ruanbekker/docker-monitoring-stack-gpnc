@@ -8,6 +8,10 @@ x-logging:
     max-file: "1"
     tag: "{{.Name}}"
 
+x-common-labels: &default-labels
+  logging: "promtail"
+  logging_jobname: "containerlogs"
+
 services:
   grafana:
     image: grafana/grafana:${GRAFANA_VERSION:-11.0.0}
@@ -20,12 +24,15 @@ services:
       - GF_LOG_MODE=console
       - GF_LOG_LEVEL=critical
       - GF_PANELS_ENABLE_ALPHA=true
-      - GF_INSTALL_PLUGINS=grafana-polystat-panel
+      - GF_FEATURE_TOGGLES_ENABLE=accessControlOnCall lokiLogsDataplane
+      - GF_INSTALL_PLUGINS=grafana-polystat-panel,https://storage.googleapis.com/integration-artifacts/grafana-lokiexplore-app/grafana-lokiexplore-app-latest.zip;grafana-lokiexplore-app
     volumes:
       - ./configs/grafana/provisioning/dashboards.yml:/etc/grafana/provisioning/dashboards/provisioning-dashboards.yaml:ro
       - ./configs/grafana/provisioning/datasources.yml:/etc/grafana/provisioning/datasources/provisioning-datasources.yaml:ro
+      - ./configs/grafana/plugins/app.yaml:/etc/grafana/provisioning/plugins/app.yaml:ro
       - ./dashboards/node-metrics.json:/var/lib/grafana/dashboards/node-metrics.json:ro
       - ./dashboards/container-metrics.json:/var/lib/grafana/dashboards/container-metrics.json:ro
+      - ./dashboards/log-search.json:/var/lib/grafana/dashboards/log-search.json:ro
       - grafana-data:/var/lib/grafana
     depends_on:
       - prometheus
@@ -33,6 +40,8 @@ services:
       - 3000:3000
     networks:
       - monitoring
+    labels:
+      <<: *default-labels
     logging: *default-logging
 
   prometheus:
@@ -58,6 +67,8 @@ services:
       - 9090:9090
     networks:
       - monitoring
+    labels:
+      <<: *default-labels
     logging: *default-logging
 
   cadvisor:
@@ -75,6 +86,8 @@ services:
       #- /dev/disk:/dev/disk:ro
     networks:
       - monitoring
+    labels:
+      <<: *default-labels
     logging: *default-logging
 
   node-exporter:
@@ -92,6 +105,8 @@ services:
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
     networks:
       - monitoring
+    labels:
+      <<: *default-labels
     logging: *default-logging
 
   alertmanager:
@@ -108,6 +123,8 @@ services:
       - 9093:9093
     networks:
       - monitoring
+    labels:
+      <<: *default-labels
     logging: *default-logging
 
   redis:
@@ -117,6 +134,42 @@ services:
       - 6379:6379
     cpus: 0.5
     mem_limit: 512m
+    networks:
+      - monitoring
+    labels:
+      <<: *default-labels
+    logging: *default-logging
+
+  loki:
+    image: grafana/loki:3.0.0
+    container_name: loki
+    user: root
+    ports:
+      - 3100:3100
+    command: -config.file=/etc/loki/loki.yaml
+    volumes:
+      - ./configs/loki/loki.yaml:/etc/loki/loki.yaml
+      - ./configs/loki/rules.yaml:/etc/loki/rules/fake/loki-rules.yml
+    networks:
+      - monitoring
+    labels:
+      <<: *default-labels
+    logging: *default-logging
+
+  promtail:
+    image:  grafana/promtail:3.0.0
+    container_name: promtail
+    volumes:
+      - ./configs/promtail/promtail.yaml:/etc/promtail/docker-config.yaml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/promtail/docker-config.yaml
+    depends_on:
+      - loki
+    networks:
+      - monitoring
+    labels:
+      <<: *default-labels
     logging: *default-logging
 
 volumes:
