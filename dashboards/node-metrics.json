@@ -907,7 +907,10 @@
     "refresh": "",
     "schemaVersion": 35,
     "style": "dark",
-    "tags": [],
+    "tags": [
+      "node-exporter",
+      "docker"
+    ],
     "templating": {
       "list": [
         {
