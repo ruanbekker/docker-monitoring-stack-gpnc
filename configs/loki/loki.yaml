@@ -3,6 +3,7 @@ auth_enabled: false
 server:
   http_listen_port: 3100
   grpc_listen_port: 9096
+  log_level: info
 
 common:
   instance_addr: 127.0.0.1
@@ -47,6 +48,12 @@ schema_config:
 
 ruler:
   alertmanager_url: http://alertmanager:9093
+  rule_path: /etc/loki/rules
+  storage:
+    type: local
+    local:
+      directory: /etc/loki/rules
+  enable_api: true
 
 analytics:
   reporting_enabled: false
