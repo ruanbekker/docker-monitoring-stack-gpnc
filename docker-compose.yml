@@ -20,10 +20,12 @@ services:
       - GF_LOG_MODE=console
       - GF_LOG_LEVEL=critical
       - GF_PANELS_ENABLE_ALPHA=true
-      - GF_INSTALL_PLUGINS=grafana-polystat-panel
+      - GF_FEATURE_TOGGLES_ENABLE=accessControlOnCall lokiLogsDataplane
+      - GF_INSTALL_PLUGINS=grafana-polystat-panel,https://storage.googleapis.com/integration-artifacts/grafana-lokiexplore-app/grafana-lokiexplore-app-latest.zip;grafana-lokiexplore-app
     volumes:
       - ./configs/grafana/provisioning/dashboards.yml:/etc/grafana/provisioning/dashboards/provisioning-dashboards.yaml:ro
       - ./configs/grafana/provisioning/datasources.yml:/etc/grafana/provisioning/datasources/provisioning-datasources.yaml:ro
+      - ./configs/grafana/plugins/app.yaml:/etc/grafana/provisioning/plugins/app.yaml:ro
       - ./dashboards/node-metrics.json:/var/lib/grafana/dashboards/node-metrics.json:ro
       - ./dashboards/container-metrics.json:/var/lib/grafana/dashboards/container-metrics.json:ro
       - grafana-data:/var/lib/grafana
@@ -52,6 +54,9 @@ services:
       - ./configs/prometheus/recording-rules.yml:/etc/prometheus/recording-rules.yml
       - ./configs/prometheus/alerting-rules.yml:/etc/prometheus/alerting-rules.yml
       - prometheus-data:/prometheus
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
     depends_on:
       - alertmanager
     ports:
@@ -75,6 +80,9 @@ services:
       #- /dev/disk:/dev/disk:ro
     networks:
       - monitoring
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
     logging: *default-logging
 
   node-exporter:
@@ -92,6 +100,9 @@ services:
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
     networks:
       - monitoring
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
     logging: *default-logging
 
   alertmanager:
@@ -108,6 +119,9 @@ services:
       - 9093:9093
     networks:
       - monitoring
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
     logging: *default-logging
 
   redis:
@@ -117,6 +131,43 @@ services:
       - 6379:6379
     cpus: 0.5
     mem_limit: 512m
+    networks:
+      - monitoring
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
+    logging: *default-logging
+
+  loki:
+    image: grafana/loki:3.0.0
+    container_name: loki
+    ports:
+      - 3100:3100
+    command: -config.file=/etc/loki/loki.yaml
+    volumes:
+      - ./configs/loki/loki.yaml:/etc/loki/loki.yaml
+    networks:
+      - monitoring
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
+    logging: *default-logging
+
+  promtail:
+    image:  grafana/promtail:3.0.0
+    container_name: promtail
+    volumes:
+      - ./configs/promtail/promtail.yaml:/etc/promtail/docker-config.yaml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/promtail/docker-config.yaml
+    depends_on:
+      - loki
+    networks:
+      - monitoring
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
     logging: *default-logging
 
 volumes:
