@@ -31,6 +31,8 @@ grafana         /run.sh                          Up             0.0.0.0:3000->30
 node-exporter   /bin/node_exporter --path. ...   Up             9100/tcp              
 prometheus      /bin/prometheus --config.f ...   Up             0.0.0.0:9090->9090/tcp
 alertmanager    /bin/alertmanager --config ...   Up             0.0.0.0:9093->9093/tcp
+loki            /usr/bin/loki -conf ...          Up             0.0.0.0:3100->3100/tcp
+promtail        /usr/bin/promtail ...            Up
 ```
 
 ## Access Grafana
@@ -58,6 +60,10 @@ And then we can view more detail on a alert rule:
 And for our container metrics we can access the **Container Metrics** dashboard:
 
 ![](./assets/grafana-container-metrics.png)
+
+For accessing the **Logs** we can navigate to the Explore / Logs view:
+
+![](./assets/grafana-explore-logs.png)
 
 ## Endpoints
 
