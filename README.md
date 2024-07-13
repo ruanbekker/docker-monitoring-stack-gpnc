@@ -41,11 +41,11 @@ promtail        /usr/bin/promtail ...            Up
 
 ## Access Grafana
 
-Access grafana on [Grafana Home](http://localhost:3000/?orgId=1) (or `make open`) and you should see the two dashboards that was provisioned:
+Access grafana on [Grafana Home](http://localhost:3000/?orgId=1) (or `make open`) and you should see the three dashboards that was provisioned:
 
 ![](./assets/grafana-home.png)
 
-Once you select the nodes dashboard, it should look something like this:
+Once you select the **Node Metrics** dashboard, it should look something like this:
 
 ![](./assets/grafana-dashboard.png)
 
@@ -64,6 +64,10 @@ And then we can view more detail on a alert rule:
 And for our container metrics we can access the **Container Metrics** dashboard:
 
 ![](./assets/grafana-container-metrics.png)
+
+Then for our last dashboard, the **Container Log Search**, by default the metric panel will be collapsed, but to expand it for visibility it will look like this:
+
+![](./assets/grafana-logs-search-dashboard.png)
 
 And we can also view our **Container Logs** in the explore section:
 
@@ -84,6 +88,7 @@ The following endpoints are available:
 | Node-Exporter  | http://node-exporter:9100 | http://localhost:9100 |
 | cAdvisor       | http://cadvisor:8080      | N/A                   |
 | Alertmanager   | http://alertmanager:9093  | http://localhost:9093 |
+| Loki           | http://loki:3100          | http://localhost:3100 |
 
 ## Cleanup
 
