@@ -8,6 +8,10 @@ x-logging:
     max-file: "1"
     tag: "{{.Name}}"
 
+x-common-labels: &default-labels
+  logging: "promtail"
+  logging_jobname: "containerlogs"
+
 services:
   grafana:
     image: grafana/grafana:${GRAFANA_VERSION:-11.0.0}
@@ -28,6 +32,7 @@ services:
       - ./configs/grafana/plugins/app.yaml:/etc/grafana/provisioning/plugins/app.yaml:ro
       - ./dashboards/node-metrics.json:/var/lib/grafana/dashboards/node-metrics.json:ro
       - ./dashboards/container-metrics.json:/var/lib/grafana/dashboards/container-metrics.json:ro
+      - ./dashboards/log-search.json:/var/lib/grafana/dashboards/log-search.json:ro
       - grafana-data:/var/lib/grafana
     depends_on:
       - prometheus
@@ -35,6 +40,8 @@ services:
       - 3000:3000
     networks:
       - monitoring
+    labels:
+      <<: *default-labels
     logging: *default-logging
 
   prometheus:
@@ -54,15 +61,14 @@ services:
       - ./configs/prometheus/recording-rules.yml:/etc/prometheus/recording-rules.yml
       - ./configs/prometheus/alerting-rules.yml:/etc/prometheus/alerting-rules.yml
       - prometheus-data:/prometheus
-    labels:
-      logging: "promtail"
-      logging_jobname: "containerlogs"
     depends_on:
       - alertmanager
     ports:
       - 9090:9090
     networks:
       - monitoring
+    labels:
+      <<: *default-labels
     logging: *default-logging
 
   cadvisor:
@@ -81,8 +87,7 @@ services:
     networks:
       - monitoring
     labels:
-      logging: "promtail"
-      logging_jobname: "containerlogs"
+      <<: *default-labels
     logging: *default-logging
 
   node-exporter:
@@ -101,8 +106,7 @@ services:
     networks:
       - monitoring
     labels:
-      logging: "promtail"
-      logging_jobname: "containerlogs"
+      <<: *default-labels
     logging: *default-logging
 
   alertmanager:
@@ -120,8 +124,7 @@ services:
     networks:
       - monitoring
     labels:
-      logging: "promtail"
-      logging_jobname: "containerlogs"
+      <<: *default-labels
     logging: *default-logging
 
   redis:
@@ -134,23 +137,23 @@ services:
     networks:
       - monitoring
     labels:
-      logging: "promtail"
-      logging_jobname: "containerlogs"
+      <<: *default-labels
     logging: *default-logging
 
   loki:
     image: grafana/loki:3.0.0
     container_name: loki
+    user: root
     ports:
       - 3100:3100
     command: -config.file=/etc/loki/loki.yaml
     volumes:
       - ./configs/loki/loki.yaml:/etc/loki/loki.yaml
+      - ./configs/loki/rules.yaml:/etc/loki/rules/fake/loki-rules.yml
     networks:
       - monitoring
     labels:
-      logging: "promtail"
-      logging_jobname: "containerlogs"
+      <<: *default-labels
     logging: *default-logging
 
   promtail:
@@ -166,8 +169,7 @@ services:
     networks:
       - monitoring
     labels:
-      logging: "promtail"
-      logging_jobname: "containerlogs"
+      <<: *default-labels
     logging: *default-logging
 
 volumes:
