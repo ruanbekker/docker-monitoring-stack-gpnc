@@ -61,7 +61,11 @@ And for our container metrics we can access the **Container Metrics** dashboard:
 
 ![](./assets/grafana-container-metrics.png)
 
-For accessing the **Logs** we can navigate to the Explore / Logs view:
+And we can also view our **Container Logs** in the explore section:
+
+![](./assets/grafana-logs-view.png)
+
+For discovering the **Logs** we can navigate to the Explore / Logs view:
 
 ![](./assets/grafana-explore-logs.png)
 
