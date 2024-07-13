@@ -1,5 +1,9 @@
 # docker-monitoring-stack-gpnc
-Grafana Prometheus Node-Exporter cAdvisor - Docker Monitoring Stack
+Grafana Prometheus Node-Exporter cAdvisor Loki - Docker Monitoring Stack
+
+## About
+
+Get your monitoring stack up and running with one command using a Docker Compose stack featuring Grafana, Prometheus, Node-Exporter, cAdvisor, Alertmanager, and Loki.
 
 ## Makefile
 
