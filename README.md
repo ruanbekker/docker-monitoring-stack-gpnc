@@ -3,7 +3,14 @@ Grafana Prometheus Node-Exporter cAdvisor Loki - Docker Monitoring Stack
 
 ## About
 
-Get your monitoring stack up and running with one command using a Docker Compose stack featuring Grafana, Prometheus, Node-Exporter, cAdvisor, Alertmanager, and Loki.
+Get your monitoring stack up and running with one command using a Docker Compose stack featuring:
+
+- **Grafana**: Dashboarding.
+- **Prometheus**: Timeseries database for metrics.
+- **Node-Exporter**: Node metrics.
+- **cAdvisor**: Container metrics.
+- **Alertmanager**: Alerting system.
+- **Loki**: Logs (including explore-logs).
 
 ## Makefile
 
