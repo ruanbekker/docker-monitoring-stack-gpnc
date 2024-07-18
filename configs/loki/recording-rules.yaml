@@ -1,0 +1,14 @@
+groups:
+    - name: log-recording-rules
+      interval: 1m
+      rules:
+        - record: instance:service_loki_log_rate:sum_rate1m
+          expr: sum(rate({service_name="loki"}[1m]))
+          labels:
+            cluster: local
+            service_name: loki
+        - record: instance:service_log_bytes:sum_rate1m
+          expr: |
+            sum(bytes_over_time({job="containerlogs", service_name=~".+"}[1m])) by (service_name)
+          labels:
+            cluster: local

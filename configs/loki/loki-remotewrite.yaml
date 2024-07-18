@@ -1,0 +1,94 @@
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+  grpc_listen_port: 9096
+  log_level: info
+
+common:
+  instance_addr: 127.0.0.1
+  path_prefix: /tmp/loki
+  storage:
+    filesystem:
+      chunks_directory: /tmp/loki/chunks
+      rules_directory: /tmp/loki/rules
+  replication_factor: 1
+  ring:
+    kvstore:
+      store: inmemory
+
+frontend:
+  max_outstanding_per_tenant: 2048
+
+pattern_ingester:
+  enabled: true
+
+limits_config:
+  ingestion_rate_mb: 50000
+  ingestion_rate_strategy: global
+  ingestion_burst_size_mb: 50000
+  max_global_streams_per_user: 0
+  max_label_name_length: 1024
+  max_label_value_length: 2048
+  max_label_names_per_series: 30
+  max_streams_matchers_per_query: 1000
+  max_concurrent_tail_requests: 20
+  max_entries_limit_per_query: 5000
+  volume_enabled: true
+  reject_old_samples: true
+  reject_old_samples_max_age: 168h
+  ruler_remote_write_config:
+    default_client:
+      url: "http://prometheus-remote:9090/api/v1/write"
+      send_exemplars: true
+      basic_auth:
+        username: ""
+        password: ""
+      queue_config:
+        max_samples_per_send: 1000
+        batch_send_deadline: 5s
+        max_shards: 200
+        min_shards: 1
+        capacity: 2500
+
+query_range:
+  results_cache:
+    cache:
+      embedded_cache:
+        enabled: true
+        max_size_mb: 100
+
+schema_config:
+  configs:
+    - from: 2020-10-24
+      store: tsdb
+      object_store: filesystem
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h
+
+ruler:
+  alertmanager_url: 'http://alertmanager:9093'
+  rule_path: /etc/loki/rules
+  storage:
+    type: local
+    local:
+      directory: /etc/loki/rules
+  enable_api: true
+  remote_write:
+    enabled: true
+    client:
+      url: 'http://prometheus-remote:9090/api/v1/write'
+      queue_config:
+        batch_send_deadline: 5s
+        capacity: 2500
+        max_samples_per_send: 1000
+        max_shards: 200
+        min_shards: 1
+    config_refresh_period: 10s
+    add_org_id_header: true
+
+analytics:
+  reporting_enabled: false
+
