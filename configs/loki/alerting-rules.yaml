@@ -1,5 +1,5 @@
 groups:
-    - name: log-rules
+    - name: log-alerting-rules
       rules:
         - alert: HighLogErrorRate
           expr: rate({service_name="loki"} | logfmt | level="error"[1m]) > 1

@@ -1,5 +1,5 @@
 groups:
-- name: prometheus_node_exporter_rules
+- name: node-exporter-recording-rules
   rules:
   - expr: count without (cpu) (count without (mode) (node_cpu_seconds_total{job="node-exporter"}))
     record: instance:node_num_cpu:sum

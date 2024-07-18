@@ -1,0 +1,50 @@
+version: '3.8'
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    max-size: "1m"
+    max-file: "1"
+    tag: "{{.Name}}"
+
+x-common-labels: &default-labels
+  logging: "promtail"
+  logging_jobname: "containerlogs"
+
+services:
+  loki:
+    volumes:
+      - ./configs/loki/recording-rules.yaml:/etc/loki/rules/fake/recording-rules.yml
+
+  prometheus-remote:
+    image: prom/prometheus:${PROMETHEUS_VERSION:-v2.42.0}
+    container_name: prometheus-remote
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--log.level=info'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=7d'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-lifecycle'
+      - '--web.enable-remote-write-receiver'
+      - '--web.external-url=http://localhost:9090'
+    volumes:
+      - ./configs/prometheus-remote/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-remote-data:/prometheus
+    ports:
+      - 9091:9090
+    networks:
+      - monitoring
+    labels:
+      <<: *default-labels
+    logging: *default-logging
+
+volumes:
+  prometheus-remote-data: {}
+
+networks:
+  monitoring:
+    name: monitoring

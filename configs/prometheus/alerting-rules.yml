@@ -1,5 +1,5 @@
 groups:
-- name: node-exporter
+- name: node-exporter-alerting-rules
   rules:
   - alert: NodeOutOfMemory
     annotations:

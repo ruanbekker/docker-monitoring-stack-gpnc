@@ -1,0 +1,9 @@
+global:
+  scrape_interval: 15s
+  external_labels:
+    cluster: remote
+
+scrape_configs:
+  - job_name: 'prometheus-remote'
+    static_configs:
+      - targets: ['localhost:9090']

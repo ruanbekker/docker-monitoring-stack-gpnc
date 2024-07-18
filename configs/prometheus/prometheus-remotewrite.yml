@@ -44,4 +44,11 @@ scrape_configs:
         labels:
           container: 'loki'
 
-# remote_write: see ./configs/prometheus-remote/prometheus.yml
+remote_write:
+  - url: 'http://prometheus-remote:9090/api/v1/write'
+    queue_config:
+      max_samples_per_send: 1000
+      batch_send_deadline: 5s
+      max_shards: 200
+      min_shards: 1
+      capacity: 2500
