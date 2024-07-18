@@ -57,7 +57,7 @@ services:
       - '--web.console.templates=/usr/share/prometheus/consoles'
       - '--web.external-url=http://localhost:9090'
     volumes:
-      - ./configs/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./configs/prometheus/${PROMETHEUS_CONFIG_FILENAME:-prometheus}.yml:/etc/prometheus/prometheus.yml
       - ./configs/prometheus/recording-rules.yml:/etc/prometheus/recording-rules.yml
       - ./configs/prometheus/alerting-rules.yml:/etc/prometheus/alerting-rules.yml
       - prometheus-data:/prometheus
@@ -148,8 +148,8 @@ services:
       - 3100:3100
     command: -config.file=/etc/loki/loki.yaml
     volumes:
-      - ./configs/loki/loki.yaml:/etc/loki/loki.yaml
-      - ./configs/loki/rules.yaml:/etc/loki/rules/fake/loki-rules.yml
+      - ./configs/loki/${LOKI_CONFIG_FILENAME:-loki}.yaml:/etc/loki/loki.yaml
+      - ./configs/loki/alerting-rules.yaml:/etc/loki/rules/fake/alerting-rules.yml
     networks:
       - monitoring
     labels:
