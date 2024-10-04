@@ -70,6 +70,14 @@ And then we can view more detail on a alert rule:
 
 ![](./assets/grafana-alerting-detail.png)
 
+When we see one of our alerts are in an alert state:
+
+![](./assets/grafana-alert-state.png)
+
+We will see them be displayed in Uncomplicated Alert Receiver:
+
+![](./assets/uar-alert-view.png)
+
 And for our container metrics we can access the **Container Metrics** dashboard:
 
 ![](./assets/grafana-container-metrics.png)
