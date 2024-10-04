@@ -38,6 +38,8 @@ services:
       - prometheus
     ports:
       - 3000:3000
+    cpus: 0.5
+    mem_limit: 512m
     networks:
       - monitoring
     labels:
@@ -65,6 +67,8 @@ services:
       - alertmanager
     ports:
       - 9090:9090
+    cpus: 0.5
+    mem_limit: 512m
     networks:
       - monitoring
     labels:
@@ -84,6 +88,8 @@ services:
         # https://github.com/google/cadvisor/issues/1565#issuecomment-718812180
       - /var/run/docker.sock:/var/run/docker.sock
       #- /dev/disk:/dev/disk:ro
+    cpus: 0.5
+    mem_limit: 512m
     networks:
       - monitoring
     labels:
@@ -103,6 +109,8 @@ services:
       - '--path.sysfs=/host/sys'
       - '--collector.filesystem.ignored-mount-points'
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    cpus: 0.5
+    mem_limit: 512m
     networks:
       - monitoring
     labels:
@@ -121,6 +129,23 @@ services:
       - ./configs/alertmanager/alertmanager-fallback-config.yml:/etc/alertmanager/config.yml
     ports:
       - 9093:9093
+    cpus: 0.5
+    mem_limit: 512m
+    networks:
+      - monitoring
+    depends_on:
+      - uncomplicated-alert-receiver
+    labels:
+      <<: *default-labels
+    logging: *default-logging
+
+  uncomplicated-alert-receiver:
+    image: ghcr.io/jamesread/uncomplicated-alert-receiver
+    container_name: uncomplicated-alert-receiver
+    ports:
+      - 9094:8080
+    cpus: 0.5
+    mem_limit: 512m
     networks:
       - monitoring
     labels:
@@ -150,6 +175,8 @@ services:
     volumes:
       - ./configs/loki/loki.yaml:/etc/loki/loki.yaml
       - ./configs/loki/rules.yaml:/etc/loki/rules/fake/loki-rules.yml
+    cpus: 0.5
+    mem_limit: 512m
     networks:
       - monitoring
     labels:
@@ -166,6 +193,8 @@ services:
     command: -config.file=/etc/promtail/docker-config.yaml
     depends_on:
       - loki
+    cpus: 0.5
+    mem_limit: 512m
     networks:
       - monitoring
     labels:
