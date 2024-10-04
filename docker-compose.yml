@@ -11,6 +11,7 @@ x-logging:
 x-common-labels: &default-labels
   logging: "promtail"
   logging_jobname: "containerlogs"
+  stackname: "docker-monitoring-stack-gpnc"
 
 services:
   grafana:

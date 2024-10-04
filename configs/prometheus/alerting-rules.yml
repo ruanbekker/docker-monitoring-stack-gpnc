@@ -211,3 +211,69 @@ groups:
     expr: node_md_disks{state="failed"} > 0
     labels:
       severity: warning
+
+- name: cadvisor
+  rules:
+  - alert: ContainerMemoryUsageHigh
+    annotations:
+      summary: "Container {{ $labels.name }} memory usage is high"
+      description: "The container {{ $labels.name }} on instance {{ $labels.instance }} is using more than 80% of its allocated memory.\nVALUE = {{ $value }}\nLABELS = {{ $labels }}"
+    expr: (container_memory_usage_bytes{container_label_com_docker_compose_config_hash=~".+", container_label_stackname="docker-monitoring-stack-gpnc"} / container_spec_memory_limit_bytes) > 0.8
+    for: 5m
+    labels:
+      severity: warning
+
+  - alert: ContainerMemoryAlmostOut
+    annotations:
+      summary: "Container {{ $labels.name }} memory almost full"
+      description: "The container {{ $labels.name }} on instance {{ $labels.instance }} is using more than 90% of its allocated memory.\nVALUE = {{ $value }}\nLABELS = {{ $labels }}"
+    expr: (container_memory_usage_bytes{container_label_com_docker_compose_config_hash=~".+", container_label_stackname="docker-monitoring-stack-gpnc"} / container_spec_memory_limit_bytes) > 0.9
+    for: 2m
+    labels:
+      severity: critical
+
+  - alert: ContainerCPUThrottlingHigh
+    annotations:
+      summary: "Container {{ $labels.name }} experiencing high CPU throttling"
+      description: "The container {{ $labels.name }} on instance {{ $labels.instance }} is experiencing high CPU throttling.\nVALUE = {{ $value }}\nLABELS = {{ $labels }}"
+    expr: rate(container_cpu_cfs_throttled_periods_total[5m]) / rate(container_cpu_cfs_periods_total[5m]) > 0.2
+    for: 5m
+    labels:
+      severity: warning
+
+  - alert: ContainerCPUUsageHigh
+    annotations:
+      summary: "Container {{ $labels.name }} CPU usage is high"
+      description: "The container {{ $labels.name }} on instance {{ $labels.instance }} is using more than 80% of its allocated CPU.\nVALUE = {{ $value }}\nLABELS = {{ $labels }}"
+    expr: rate(container_cpu_usage_seconds_total[1m]) > (container_spec_cpu_quota / container_spec_cpu_period * 0.8)
+    for: 5m
+    labels:
+      severity: warning
+
+  - alert: ContainerDiskUsageHigh
+    annotations:
+      summary: "Container {{ $labels.name }} disk usage is high"
+      description: "The container {{ $labels.name }} on instance {{ $labels.instance }} is using more than 80% of its disk quota.\nVALUE = {{ $value }}\nLABELS = {{ $labels }}"
+    expr: container_fs_usage_bytes / container_fs_limit_bytes > 0.8
+    for: 5m
+    labels:
+      severity: warning
+
+  - alert: ContainerDiskAlmostOut
+    annotations:
+      summary: "Container {{ $labels.name }} almost out of disk space"
+      description: "The container {{ $labels.name }} on instance {{ $labels.instance }} is using more than 90% of its disk quota.\nVALUE = {{ $value }}\nLABELS = {{ $labels }}"
+    expr: container_fs_usage_bytes / container_fs_limit_bytes > 0.9
+    for: 5m
+    labels:
+      severity: critical
+
+  - alert: ContainerRestarts
+    annotations:
+      summary: "Container {{ $labels.name }} restarted"
+      description: "The container {{ $labels.name }} on instance {{ $labels.instance }} has restarted more than 3 times in the last 5 minutes.\nVALUE = {{ $value }}\nLABELS = {{ $labels }}"
+    expr: rate(container_restart_count_total[5m]) > 3
+    for: 5m
+    labels:
+      severity: critical
+
