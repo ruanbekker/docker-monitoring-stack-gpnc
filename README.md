@@ -10,6 +10,7 @@ Get your monitoring stack up and running with one command using a Docker Compose
 - **Node-Exporter**: Node metrics.
 - **cAdvisor**: Container metrics.
 - **Alertmanager**: Alerting system.
+- **Uncomplicated Alert Receiver**: UI with Received Alerts.
 - **Loki**: Logs (including explore-logs).
 
 ## Makefile
@@ -35,15 +36,16 @@ docker-compose ps
 The output should looke like this:
 
 ```bash
-    Name                   Command                  State               Ports         
---------------------------------------------------------------------------------------
-cadvisor        /usr/bin/cadvisor -logtostderr   Up (healthy)   8080/tcp              
-grafana         /run.sh                          Up             0.0.0.0:3000->3000/tcp
-node-exporter   /bin/node_exporter --path. ...   Up             9100/tcp              
-prometheus      /bin/prometheus --config.f ...   Up             0.0.0.0:9090->9090/tcp
-alertmanager    /bin/alertmanager --config ...   Up             0.0.0.0:9093->9093/tcp
-loki            /usr/bin/loki -conf ...          Up             0.0.0.0:3100->3100/tcp
-promtail        /usr/bin/promtail ...            Up
+    Name                      Command                          State          Ports         
+-----------------------------------------------------------------------------------------------------
+cadvisor                      /usr/bin/cadvisor -logtostderr   Up (healthy)   8080/tcp              
+grafana                       /run.sh                          Up             0.0.0.0:3000->3000/tcp
+node-exporter                 /bin/node_exporter --path. ...   Up             9100/tcp              
+prometheus                    /bin/prometheus --config.f ...   Up             0.0.0.0:9090->9090/tcp
+alertmanager                  /bin/alertmanager --config ...   Up             0.0.0.0:9093->9093/tcp
+loki                          /usr/bin/loki -conf ...          Up             0.0.0.0:3100->3100/tcp
+promtail                      /usr/bin/promtail ...            Up
+uncomplicated-alert-receiver  /app/uar                         Up             0.0.0.0:9094->8080/tcp
 ```
 
 ## Access Grafana
@@ -88,14 +90,15 @@ For discovering the **Logs** we can navigate to the Explore / Logs view:
 
 The following endpoints are available:
 
-| Container      | Internal Endpoint         | External Endpoint     |
-| -------------- | ------------------------- |---------------------- |
-| Grafana        | http://grafana:3000       | http://localhost:3000 |
-| Prometheus     | http://prometheus:9090    | http://localhost:9090 |
-| Node-Exporter  | http://node-exporter:9100 | http://localhost:9100 |
-| cAdvisor       | http://cadvisor:8080      | N/A                   |
-| Alertmanager   | http://alertmanager:9093  | http://localhost:9093 |
-| Loki           | http://loki:3100          | http://localhost:3100 |
+| Container                    | Internal Endpoint                         | External Endpoint     |
+| ---------------------------- | ----------------------------------------- |---------------------- |
+| Grafana                      | http://grafana:3000                       | http://localhost:3000 |
+| Prometheus                   | http://prometheus:9090                    | http://localhost:9090 |
+| Node-Exporter                | http://node-exporter:9100                 | http://localhost:9100 |
+| cAdvisor                     | http://cadvisor:8080                      | N/A                   |
+| Alertmanager                 | http://alertmanager:9093                  | http://localhost:9093 |
+| Uncomplicated Alert Receiver | http://uncomplicated-alert-receiver:9094  | http://localhost:9094 |
+| Loki                         | http://loki:3100                          | http://localhost:3100 |
 
 ## Cleanup
 

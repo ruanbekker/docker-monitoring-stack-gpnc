@@ -1,7 +1,14 @@
 route:
   group_wait: 0s
-  receiver: empty-receiver
+  group_interval: 30s
+  repeat_interval: 30s
+  receiver: uncomplicated-alert-receiver
 
 receivers:
   # no notifications will be sent to alertmanager
   - name: 'empty-receiver'
+  # https://github.com/jamesread/uncomplicated-alert-receiver
+  - name: uncomplicated-alert-receiver
+    webhook_configs:
+      - url: http://uncomplicated-alert-receiver:8080/alerts
+        send_resolved: false
