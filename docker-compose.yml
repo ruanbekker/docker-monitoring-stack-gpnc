@@ -15,7 +15,7 @@ x-common-labels: &default-labels
 
 services:
   grafana:
-    image: grafana/grafana:${GRAFANA_VERSION:-11.0.0}
+    image: grafana/grafana:${GRAFANA_VERSION:-11.5.1}
     container_name: grafana
     restart: unless-stopped
     environment:
@@ -167,7 +167,7 @@ services:
     logging: *default-logging
 
   loki:
-    image: grafana/loki:3.0.0
+    image: grafana/loki:3.3.2
     container_name: loki
     user: root
     ports:
@@ -185,7 +185,7 @@ services:
     logging: *default-logging
 
   promtail:
-    image:  grafana/promtail:3.0.0
+    image:  grafana/promtail:3.3.2
     container_name: promtail
     volumes:
       - ./configs/promtail/promtail.yaml:/etc/promtail/docker-config.yaml
