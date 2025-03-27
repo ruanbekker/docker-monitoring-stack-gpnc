@@ -15,7 +15,7 @@ x-common-labels: &default-labels
 
 services:
   grafana:
-    image: grafana/grafana:${GRAFANA_VERSION:-11.5.1}
+    image: grafana/grafana:${GRAFANA_VERSION:-11.6.0}
     container_name: grafana
     restart: unless-stopped
     environment:
