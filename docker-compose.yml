@@ -15,7 +15,7 @@ x-common-labels: &default-labels
 
 services:
   grafana:
-    image: grafana/grafana:${GRAFANA_VERSION:-11.6.0}
+    image: grafana/grafana:${GRAFANA_VERSION:-12.0.0}
     container_name: grafana
     restart: unless-stopped
     environment:
@@ -26,11 +26,10 @@ services:
       - GF_LOG_LEVEL=critical
       - GF_PANELS_ENABLE_ALPHA=true
       - GF_FEATURE_TOGGLES_ENABLE=accessControlOnCall lokiLogsDataplane
-      - GF_INSTALL_PLUGINS=grafana-polystat-panel,https://storage.googleapis.com/integration-artifacts/grafana-lokiexplore-app/grafana-lokiexplore-app-latest.zip;grafana-lokiexplore-app
+      - GF_INSTALL_PLUGINS=grafana-polystat-panel
     volumes:
       - ./configs/grafana/provisioning/dashboards.yml:/etc/grafana/provisioning/dashboards/provisioning-dashboards.yaml:ro
       - ./configs/grafana/provisioning/datasources.yml:/etc/grafana/provisioning/datasources/provisioning-datasources.yaml:ro
-      - ./configs/grafana/plugins/app.yaml:/etc/grafana/provisioning/plugins/app.yaml:ro
       - ./dashboards/node-metrics.json:/var/lib/grafana/dashboards/node-metrics.json:ro
       - ./dashboards/container-metrics.json:/var/lib/grafana/dashboards/container-metrics.json:ro
       - ./dashboards/log-search.json:/var/lib/grafana/dashboards/log-search.json:ro
